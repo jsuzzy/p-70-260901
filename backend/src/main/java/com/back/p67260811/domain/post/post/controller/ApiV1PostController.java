@@ -7,6 +7,7 @@ import com.back.p67260811.domain.post.post.entity.Post;
 import com.back.p67260811.domain.post.post.service.PostService;
 import com.back.p67260811.global.dto.RsData;
 import com.back.p67260811.global.exception.ServiceException;
+import com.back.p67260811.global.rq.Rq;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -24,6 +25,7 @@ public class ApiV1PostController {
 
     private final PostService postService;
     private final MemberService memberService;
+    private final Rq rq;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PostDto> list() {
@@ -62,16 +64,10 @@ public class ApiV1PostController {
     @PostMapping
     @Transactional
     public RsData<PostDto> write(
-            @Valid @RequestBody PostWriteReqBody reqBody,
-            @RequestHeader("Authorization") String apiKey
+            @Valid @RequestBody PostWriteReqBody reqBody
     ) {
 
-        String authorization = apiKey.substring(7);
-
-        Member actor = memberService.findByApiKey(authorization).orElseThrow(
-                () -> new ServiceException("401-1", "API key가 유효하지 않습니다.")
-        );
-
+        Member actor = rq.getActor();
         Post post = postService.write(actor, reqBody.title, reqBody.content);
         return new RsData<>(
                 "201-1",
@@ -95,14 +91,10 @@ public class ApiV1PostController {
     @Transactional
     public RsData<Void> modify(
             @PathVariable int id,
-            @Valid @RequestBody PostModifyReqBody reqBody,
-            @RequestHeader("Authorization") String apiKey
+            @Valid @RequestBody PostModifyReqBody reqBody
     ) {
-        String authorization = apiKey.substring(7);
-        Member actor = memberService.findByApiKey(authorization).orElseThrow(
-                () -> new ServiceException("401-1", "API key가 유효하지 않습니다.")
-        );
 
+        Member actor = rq.getActor();
         Post post = postService.findById(id).get();
 
         if(!actor.equals(post.getAuthor())){
@@ -119,16 +111,10 @@ public class ApiV1PostController {
 
     @DeleteMapping("/{id}")
     public RsData<Void> delete(
-            @PathVariable int id,
-            @RequestHeader("Authorization") @NotBlank String apiKey
+            @PathVariable int id
     ) {
 
-        String authorization = apiKey.replace("Bearer ", "");
-
-        Member actor = memberService.findByApiKey(authorization).orElseThrow(
-                () -> new ServiceException("401-1", "API 키가 유효하지 않습니다.")
-        );
-
+        Member actor = rq.getActor();
         Post post = postService.findById(id).get();
 
         if(!actor.equals(post.getAuthor())) throw new ServiceException("403-1", "삭제 권한이 없습니다.");
