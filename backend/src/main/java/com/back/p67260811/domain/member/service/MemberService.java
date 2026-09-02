@@ -24,6 +24,10 @@ public class MemberService {
     }
 
     public Member join(String username, String password, String nickname, String apiKey){
+        if(memberRepository.findByUsername(username).isPresent()){
+            throw new ServiceException("409-1", "이미 존재하는 회원입니다.");
+        }
+
         if(apiKey == null){
             apiKey = UUID.randomUUID().toString();
         }
