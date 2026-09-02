@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,22 +20,13 @@ public class MemberService {
     }
 
     public Member join(String username, String password, String nickname) {
-        findByUsername(username).ifPresent(
-                (member) -> {
-                    throw new ServiceException("409-1", "이미 존재하는 회원입니다.");
-                }
-        );
-
-        Member member = new Member(username, password, nickname);
-        return memberRepository.save(member);
+        return join(username, password, nickname, null);
     }
 
     public Member join(String username, String password, String nickname, String apiKey){
-        findByUsername(username).ifPresent(
-                (member) -> {
-                    throw new ServiceException("409-1", "이미 존재하는 회원입니다.");
-                }
-        );
+        if(apiKey == null){
+            apiKey = UUID.randomUUID().toString();
+        }
 
         Member member = new Member(username, password, nickname, apiKey);
         return memberRepository.save(member);
