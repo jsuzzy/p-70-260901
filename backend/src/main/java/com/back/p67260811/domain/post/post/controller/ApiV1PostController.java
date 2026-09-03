@@ -97,9 +97,7 @@ public class ApiV1PostController {
         Member actor = rq.getActor();
         Post post = postService.findById(id).get();
 
-        if(!actor.equals(post.getAuthor())){
-            throw new ServiceException("403-1", "수정 권한이 없습니다.");
-        }
+        post.checkActorModify(actor);
 
         postService.modify(post, reqBody.title, reqBody.content);
 
@@ -117,8 +115,7 @@ public class ApiV1PostController {
         Member actor = rq.getActor();
         Post post = postService.findById(id).get();
 
-        if(!actor.equals(post.getAuthor())) throw new ServiceException("403-1", "삭제 권한이 없습니다.");
-
+        post.checkActorDelete(actor);
 
         postService.delete(id);
 
