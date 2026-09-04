@@ -59,12 +59,7 @@ public class AuthTokenServiceTest {
                 .signWith(secretKey) // 키 서명
                 .compact();
 
-        Map<String, Object> parsedPayload = (Map<String, Object>) Jwts
-                .parser()
-                .verifyWith(secretKey)
-                .build()
-                .parse(jwt)
-                .getPayload();
+        Map<String, Object> parsedPayload = Ut.jwt.payload(jwt, secretPattern);
 
         assertThat(parsedPayload)
                 .containsAllEntriesOf(payload);
@@ -77,16 +72,24 @@ public class AuthTokenServiceTest {
     @Test
     @DisplayName("Ut.jwt.toString 를 통해서 JWT 생성, {name=\"Paul\", age=23}")
     void t3() {
+
+        Map<String, Object> payload =  Map.of("name", "Paul", "age", 23);
+
         String jwt = Ut.jwt.toString(
                 secretPattern,
                 expireMillis,
-                Map.of("name", "Paul", "age", 23)
+                payload
         );
 
         assertThat(jwt).isNotBlank();
 
         boolean validResult = Ut.jwt.isValid(jwt, secretPattern);
         assertThat(validResult).isTrue();
+
+        Map<String, Object> parsedPayload = Ut.jwt.payload(jwt, secretPattern);
+
+        assertThat(parsedPayload)
+                .containsAllEntriesOf(payload);;
 
         System.out.println("jwt = " + jwt);
     }
