@@ -26,8 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AuthTokenServiceTest {
     @Autowired
     private AuthTokenService authTokenService;
-
-
     @Autowired
     private MemberRepository memberRepository;
 

@@ -2,6 +2,7 @@ package com.back.p67260811.domain.member.controller;
 
 import com.back.p67260811.domain.member.dto.MemberDto;
 import com.back.p67260811.domain.member.entity.Member;
+import com.back.p67260811.domain.member.service.AuthTokenService;
 import com.back.p67260811.domain.member.service.MemberService;
 import com.back.p67260811.global.dto.RsData;
 import com.back.p67260811.global.exception.ServiceException;
@@ -72,7 +73,8 @@ public class ApiV1MemberController {
 
     record LoginResBody(
             MemberDto memberDto,
-            String apiKey
+            String apiKey,
+            String accessToken
     ){}
 
     @PostMapping("/login")
@@ -93,14 +95,17 @@ public class ApiV1MemberController {
         //3. 비밀번호가 맞으면 인증 데이터(apiKey) 제공
 
         //4. apiKey 쿠키 생성하고 응답에 포함해서 전송
+        String accessToken = memberService.genAccessToken(actor);
         rq.addCookie("apiKey", actor.getApiKey());
+        rq.addCookie("accessToken", accessToken);
 
         return new RsData(
                 "200-1",
                 "%s님 반갑습니다!".formatted(actor.getNickname()),
                 new LoginResBody(
                         new MemberDto(actor),
-                        actor.getApiKey()
+                        actor.getApiKey(),
+                        accessToken
                 )
         );
     }
