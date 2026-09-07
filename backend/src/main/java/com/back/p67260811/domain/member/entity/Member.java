@@ -20,9 +20,10 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String apiKey; //나중에 활용
 
-    public Member(int id, String username){
+    public Member(int id, String username, String nickname){
         setId(id);
         this.username = username;
+        this.nickname = nickname;
     }
 
     public Member(String username, String password, String nickname) {
