@@ -44,9 +44,6 @@ public class Rq {
             accessToken = getCookieValue("accessToken", "");
         }
 
-        if (apiKey.isBlank())
-            throw new ServiceException("401-1", "로그인 후 이용해주세요.");
-
         Member member = null;
 
         if (!accessToken.isBlank()) {
@@ -60,6 +57,10 @@ public class Rq {
         }
 
         if (member == null) {
+
+            if (apiKey.isBlank())
+                throw new ServiceException("401-1", "API 키 정보가 존재하지 않습니다. ");
+
             member = memberService
                     .findByApiKey(apiKey)
                     .orElseThrow(() -> new ServiceException("401-3", "API 키가 유효하지 않습니다."));
