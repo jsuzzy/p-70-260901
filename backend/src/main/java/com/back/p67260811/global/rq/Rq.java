@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public class Rq {
         String apiKey = null;
         String accessToken = null;
 
-        if(headerAuthorization.isBlank()) {
+        if (!headerAuthorization.isBlank()) {
 
             if (!headerAuthorization.startsWith("Bearer ")) {
                 throw new ServiceException("401-2", "헤더의 인증 정보 형식이 올바르지 않습니다.");
@@ -39,18 +40,8 @@ public class Rq {
             apiKey = headerAuthorizationBits[1];
             accessToken = headerAuthorizationBits.length == 3 ? headerAuthorizationBits[2] : "";
         } else {
-            Cookie[] cookies = request.getCookies();
-
-            if(cookies == null) {
-                throw new ServiceException("401-1", "인증 정보가 없습니다.");
-            }
-
-            for(Cookie cookie : cookies) {
-                if(cookie.getName().equals("apiKey")) {
-                    apiKey = cookie.getValue();
-                    break;
-                }
-            }
+            apiKey = getCookieValue("apiKey", "");
+            accessToken = getCookieValue("accessToken", "");
         }
 
         if (apiKey.isBlank())
@@ -76,6 +67,20 @@ public class Rq {
 
         return member;
 
+    }
+
+    private String getCookieValue(String name, String defaultValue) {
+        return Optional
+                .ofNullable(request.getCookies())
+                .flatMap(
+                        cookies ->
+                                Arrays.stream(cookies)
+                                        .filter(cookie -> cookie.getName().equals(name))
+                                        .map(Cookie::getValue)
+                                        .filter(value -> !value.isBlank())
+                                        .findFirst()
+                )
+                .orElse(defaultValue);
     }
 
     public void addCookie(String name, String value) {
