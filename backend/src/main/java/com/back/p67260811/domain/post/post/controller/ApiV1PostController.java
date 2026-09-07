@@ -69,7 +69,7 @@ public class ApiV1PostController {
             @Valid @RequestBody PostWriteReqBody reqBody
     ) {
 
-        Member actor = rq.getActor();
+        Member actor = rq.getActor(); //짝퉁 Member
         Post post = postService.write(actor, reqBody.title, reqBody.content);
         return new RsData<>(
                 "201-1",

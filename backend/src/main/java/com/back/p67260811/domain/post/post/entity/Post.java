@@ -19,7 +19,7 @@ public class Post extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member author;
+    private Member author; //외래키인 id만 사용
 
     public Post(Member author, String title, String content) {
         this.author = author;
