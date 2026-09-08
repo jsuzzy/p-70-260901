@@ -229,7 +229,6 @@ public class ApiV1PostControllerTest {
                 .andExpect(jsonPath("$.msg").value("title-NotBlank-제목을 입력해주세요.\ntitle-Size-제목은 2글자 이상 10글자 이하로 작성해주세요."));
 
 
-
     }
 
 
@@ -297,7 +296,7 @@ public class ApiV1PostControllerTest {
         String accessToken = Ut.jwt.toString(
                 secretPattern,
                 expireSeconds,
-                Map.of("id", author.getId(), "username", author.getUsername())
+                Map.of("id", author.getId(), "username", author.getUsername(), "nickname", author.getNickname())
         );
 
         ResultActions resultActions = mvc

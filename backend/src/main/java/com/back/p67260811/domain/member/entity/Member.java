@@ -39,6 +39,6 @@ public class Member extends BaseEntity {
     }
 
     public boolean isAdmin() {
-        return "admind".equals(username);
+        return "admin".equals(username);
     }
 }

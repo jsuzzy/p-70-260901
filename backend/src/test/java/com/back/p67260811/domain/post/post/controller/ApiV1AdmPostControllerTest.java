@@ -37,12 +37,10 @@ public class ApiV1AdmPostControllerTest {
     @DisplayName("글 전체 개수 조회, count")
     void t1() throws Exception {
 
-        Member actor = memberRepository.findByUsername("admin").get();
-
         ResultActions resultActions = mvc
                 .perform(
                         get("/api/v1/adm/posts/count")
-                                .cookie(new Cookie("apiKey", actor.getApiKey()))
+                                .cookie(new Cookie("apiKey", "admin"))
                 )
                 .andDo(print());
 
@@ -60,12 +58,10 @@ public class ApiV1AdmPostControllerTest {
     @DisplayName("글 전체 개수 조회, count, 권한이 없는 경우")
     void t2() throws Exception {
 
-        Member actor = memberRepository.findByUsername("user1").get();
-
         ResultActions resultActions = mvc
                 .perform(
                         get("/api/v1/adm/posts/count")
-                                .cookie(new Cookie("apiKey", actor.getApiKey()))
+                                .cookie(new Cookie("apiKey", "user1"))
                 )
                 .andDo(print());
 
