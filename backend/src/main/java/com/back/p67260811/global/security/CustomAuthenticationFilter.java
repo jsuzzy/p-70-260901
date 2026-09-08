@@ -28,13 +28,11 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         logger.debug("CustomAuthenticationFilter called");
 
         //인증 로직
-        //api로 시작하는 요청들만 인증 필요(공개 api는 건너뛰기)
         if(!request.getRequestURI().startsWith("/api/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        //로그인, 회원가입은 인증을 거치면 안됨
         if(List.of("/api/v1/members/join", "/api/v1/members/login").contains(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
