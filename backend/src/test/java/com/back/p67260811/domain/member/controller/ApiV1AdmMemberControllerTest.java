@@ -1,6 +1,7 @@
 package com.back.p67260811.domain.member.controller;
 
 import com.back.p67260811.domain.member.repository.MemberRepository;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +52,26 @@ public class ApiV1AdmMemberControllerTest {
                 .andExpect(jsonPath("$[0].modifyDate").exists())
                 .andExpect(jsonPath("$[0].nickname").value("시스템"))
                 .andExpect(jsonPath("$[0].username").value("system"));
+    }
 
+    @Test
+    @DisplayName("회원 다건 조회, 권한이 없는 경우")
+    void t2() throws Exception {
 
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/adm/members")
+//                                .header("Authorization", "Bearer user1 accessToken")
+                                .cookie(new Cookie("apiKey", "user1"))
+                )
 
+                .andDo(print());
+
+        resultActions
+                .andExpect(handler().handlerType(ApiV1AdmMemberController.class))
+                .andExpect(handler().methodName("getItems"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.resultCode").value("403-1"))
+                .andExpect(jsonPath("$.msg").value("권한이 없습니다."));
     }
 }
