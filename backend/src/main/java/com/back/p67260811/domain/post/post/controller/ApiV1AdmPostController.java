@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiV1AdmPostController {
 
     private final PostService postService;
-    private final Rq rq;
 
     record CountResBody(
             long totalCount
