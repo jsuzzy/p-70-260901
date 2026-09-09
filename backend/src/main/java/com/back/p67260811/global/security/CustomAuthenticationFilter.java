@@ -79,13 +79,20 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             accessToken = rq.getCookieValue("accessToken", "");
         }
 
-        if (apiKey.isBlank())
-            throw new ServiceException("401-1", "로그인 후 이용해주세요.");
-
         Member member = null;
 
         boolean isAccessTokenExists = !accessToken.isBlank();
+        boolean isApiKeyExists = !apiKey.isBlank();
         boolean isAccessTokenValid = false;
+
+        //공개 api의 경우 여기서 인증 처리 하지 않고 시큐리티에게 위임
+        if(!isApiKeyExists && !isAccessTokenExists) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (!isApiKeyExists)
+            throw new ServiceException("401-1", "로그인 후 이용해주세요.");
 
         if (isAccessTokenExists) {
             Map<String, Object> payload = memberService.payloadOrNull(accessToken);
