@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,7 +70,8 @@ public class ApiV1PostController {
             @Valid @RequestBody PostWriteReqBody reqBody
     ) {
 
-        Member actor = rq.getActor(); //짝퉁 Member
+        Member actor = rq.getActor();
+
         Post post = postService.write(actor, reqBody.title, reqBody.content);
         return new RsData<>(
                 "201-1",

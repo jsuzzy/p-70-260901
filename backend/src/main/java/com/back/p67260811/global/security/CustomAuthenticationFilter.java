@@ -119,10 +119,12 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             rq.setHeader("accessToken", newAccessToken);
         }
 
-        UserDetails user = new User(
+        UserDetails user = new SecurityUser(
                 member.getUsername(),
                 "",
-                member.getAuthorities()
+                member.getAuthorities(),
+                member.getId(),
+                member.getNickname()
         );
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
